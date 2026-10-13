@@ -468,7 +468,7 @@ section[id] { scroll-margin-top: 96px; }
    -------------------------------------------------------------------------- */
 .metrics {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));   /* 수치 카드는 3칸 */
   gap: var(--gap);
 }
 .metrics article { text-align: center; }
@@ -643,7 +643,9 @@ details p {
    -------------------------------------------------------------------------- */
 .capability-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* 카드가 2·3·4개여도 한 줄에 균등하게 채워지도록 auto-fit.
+     칸 최소 폭 260px 미만으로 좁아지면 자동으로 다음 줄로 내려갑니다 */
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
   gap: var(--gap);
 }
 .capability-grid article { display: flex; flex-direction: column; }
@@ -753,7 +755,6 @@ a, .button, summary {
    -------------------------------------------------------------------------- */
 @media (max-width: 900px) {
   :root { --section-gap: 100px; }
-  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .project-card.featured { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: var(--card-pad); }
   .project-grid,
   .capability-grid { grid-template-columns: minmax(0, 1fr); }
@@ -767,6 +768,7 @@ a, .button, summary {
   .eyebrow { gap: 12px; font-size: var(--text-caption); }
   .section-heading { margin-bottom: 40px; }
   .snapshot { padding: var(--card-pad); }
+  .metrics { grid-template-columns: minmax(0, 1fr); }
   .metrics strong { font-size: var(--text-heading); }
   nav a { padding: 8px 12px; }
 }
