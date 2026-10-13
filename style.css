@@ -1,0 +1,777 @@
+/* ==========================================================================
+   DESIGN.md(Authkit 스타일 레퍼런스) 기반 style.css
+   --------------------------------------------------------------------------
+   분위기 : 한밤중 같은 near-black 캔버스 + 반투명 유리 면 + 푸른빛 헤어라인
+   색     : 거의 전부 무채색(청백색 계열). 보라(Void Violet)는 "로그인 폼의 제출
+            버튼" 전용이라 이 포트폴리오에는 쓸 곳이 없어서 일부러 쓰지 않았습니다.
+   글꼴   : 유료 글꼴을 무료 대체 글꼴로 교체했습니다.
+              Untitled Sans -> Inter            (본문·UI)
+              aeonikPro     -> Space Grotesk    (큰 제목)
+              dotDigital    -> JetBrains Mono   (영문 대문자 eyebrow)
+            한글은 세 스택 모두에서 "Pretendard Variable"로 이어지게 했습니다.
+   그림자 : DESIGN.md가 정의한 "안쪽(inset) 빛"만 사용. 바깥 drop-shadow는 없음.
+   제거됨 : 등장 애니메이션(reveal), 타자 효과, 진행 바, 주황 강조선, 카드 호버 띄우기
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   0. 웹폰트
+   index.html은 Inter와 Pretendard만 불러오므로, 제목용 Space Grotesk와
+   라벨용 JetBrains Mono는 CSS에서 직접 불러옵니다.
+   (@import는 반드시 다른 규칙보다 앞에 있어야 해서 파일 맨 위에 둡니다.)
+   -------------------------------------------------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=JetBrains+Mono:wght@400&display=swap");
+
+
+/* --------------------------------------------------------------------------
+   1. 디자인 토큰
+   값을 한 곳에 모아 두면, 나중에 색이나 간격을 바꿀 때 여기만 고치면 됩니다.
+   -------------------------------------------------------------------------- */
+:root {
+  /* 브라우저 기본 요소(스크롤바, 폼 컨트롤)도 어두운 테마로 그리게 함 */
+  color-scheme: dark;
+
+  /* 색: 텍스트는 "제목 → 본문 → 보조 → 도움말" 순으로 한 단계씩 어두워집니다 */
+  --color-midnight-canvas: #05060f;   /* 페이지 배경 */
+  --color-ice-highlight:   #d8ecf8;   /* 제목 */
+  --color-frost-glow:      #d1e4fa;   /* 본문, 링크 */
+  --color-moon-mist:       #c7d3ea;   /* 보조 본문 */
+  --color-fog-veil:        #9da7ba;   /* 도움말, 라벨 */
+  --color-pure-white:      #ffffff;   /* 버튼 글자 등 최대 강조 */
+  --gradient-ice-highlight: linear-gradient(0deg, #d8ecf8 0%, #98c0ef 100%);
+
+  /* 유리 표현용 반투명 색. 모두 같은 청백색(186,214,247 계열)에서 투명도만 다릅니다 */
+  --hairline:   rgba(186, 215, 247, 0.12);  /* 모든 테두리의 기본값 */
+  --wash-03:    rgba(186, 214, 247, 0.03);  /* 카드 면 */
+  --wash-06:    rgba(186, 214, 247, 0.06);  /* 버튼·아이콘 타일 면 */
+  --wash-12:    rgba(186, 214, 247, 0.12);  /* 버튼 hover 면 */
+  --tint-input: rgba(199, 211, 234, 0.06);  /* 이미지 자리 배경 */
+  --tint-badge: rgba(199, 211, 234, 0.12);  /* 태그 배경 (Luminous Fill) */
+
+  /* 높이감: 바깥 그림자 대신 안쪽 빛으로 표현합니다 */
+  --glass-inset:
+    inset 0 1px 1px rgba(199, 211, 234, 0.12),
+    inset 0 24px 48px rgba(199, 211, 234, 0.05),
+    inset 0 0 0 1px rgba(186, 214, 247, 0.06);
+  --modal-inset:
+    inset 0 1px 1px rgba(216, 236, 248, 0.2),
+    inset 0 24px 48px rgba(168, 216, 245, 0.06),
+    inset 0 0 0 1px rgba(199, 211, 234, 0.08);
+
+  /* 글꼴 스택: 영문 글꼴을 먼저 두면 라틴 문자는 그 글꼴로, 글꼴에 없는 한글은
+     다음 후보인 "Pretendard Variable"로 자동으로 넘어갑니다 */
+  --font-body:
+    Inter, "Pretendard Variable", Pretendard, ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-display:
+    "Space Grotesk", "Pretendard Variable", Pretendard, ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-label:
+    "JetBrains Mono", "Pretendard Variable", Pretendard, ui-monospace,
+    "SFMono-Regular", Consolas, monospace;
+
+  /* 타입 스케일 (DESIGN.md 표) */
+  --text-caption: 12px;
+  --text-body-sm: 14px;
+  --text-body: 16px;
+  --text-subheading: 18px;
+  --text-heading-sm: 24px;
+  --text-heading: 28px;
+  --text-heading-lg: 44px;
+  --text-display: 48px;
+
+  /* 간격·모양 */
+  --section-gap: 120px;   /* 섹션 사이 간격 */
+  --card-pad: 24px;       /* 카드 안쪽 여백 */
+  --gap: 16px;            /* 요소 사이 기본 간격 */
+  --radius-card: 16px;    /* 카드·모달 */
+  --radius-badge: 6px;    /* 태그 */
+  --radius-pill: 999px;   /* 버튼 */
+  --radius-circle: 9999px;/* 아이콘 타일 */
+
+  /* 좌우 여백: 화면이 1200px보다 넓으면 콘텐츠를 1200px로 가운데 정렬하고,
+     좁으면 최소 20px을 남깁니다. %는 "부모 너비" 기준이라 최상위 요소에만 씁니다 */
+  --gutter: max(20px, calc((100% - 1200px) / 2));
+}
+
+
+/* --------------------------------------------------------------------------
+   2. 기본 설정
+   -------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* 배경색은 html에 줍니다. body에 주면 아래 배경 격자(body::before, z-index:-1)가
+   body 배경 뒤로 가려져서 안 보이게 됩니다 */
+html {
+  background: var(--color-midnight-canvas);
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  /* 모바일 가로 스크롤 방지의 마지막 안전망. hidden이 아니라 clip을 쓰는 이유는
+     hidden이 sticky 헤더를 깨뜨릴 수 있기 때문입니다 */
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  overflow-x: clip;
+  color: var(--color-frost-glow);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.16px;
+  /* 한글은 단어(띄어쓰기) 단위로 줄바꿈해야 읽기 편합니다.
+     너무 긴 단어(이메일 등)는 break-word로 박스 밖으로 넘치지 않게 합니다 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p, figure, dl, dd, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+
+::selection { background: rgba(186, 214, 247, 0.24); color: var(--color-pure-white); }
+
+/* 키보드 포커스 표시 (접근성). 색은 팔레트 안의 Frost Glow를 씁니다 */
+:focus-visible {
+  outline: 2px solid var(--color-frost-glow);
+  outline-offset: 3px;
+}
+
+/* 배경 격자: 80px 간격의 1px 선(투명도 6%)이 위쪽 가운데에서 가장자리로 흐려집니다.
+   body::before 가상 요소라서 HTML을 건드리지 않아도 됩니다.
+   position:fixed + pointer-events:none 이라 레이아웃·클릭에 영향이 없습니다 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(186, 215, 247, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(186, 215, 247, 0.06) 1px, transparent 1px);
+  background-size: 80px 80px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 75%);
+}
+
+/* 키보드 사용자용 "본문으로 바로가기": 평소엔 화면 밖, 포커스를 받으면 나타남 */
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: -5rem;
+  z-index: 100;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--color-frost-glow);
+  color: var(--color-midnight-canvas);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+}
+.skip-link:focus { top: 16px; }
+
+
+/* --------------------------------------------------------------------------
+   3. 공통 타이포그래피
+   -------------------------------------------------------------------------- */
+
+/* 큰 제목(h1, 섹션 h2): Space Grotesk 500. 굵기 600 이상은 쓰지 않습니다.
+   기본은 단색(Ice Highlight)이고, 아래 @supports에서 그라데이션을 덧입힙니다 */
+h1,
+.section-heading h2,
+.contact h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--color-ice-highlight);
+  text-wrap: balance; /* 줄 길이를 고르게 맞춰 줍니다(미지원 브라우저는 무시) */
+}
+
+h1 {
+  font-size: clamp(28px, 4.5vw + 13px, var(--text-display));
+  line-height: 1.17;
+}
+.section-heading h2,
+.contact h2 {
+  font-size: clamp(28px, 4vw + 12px, var(--text-heading-lg));
+  line-height: 1.16;
+}
+
+/* Skywash 그라데이션 글자: DESIGN.md가 "가장 큰 제목에만" 쓰라고 한 규칙을 따라
+   h1과 섹션 제목에만 적용합니다. 글자 모양으로 배경을 오려내는(background-clip:text)
+   방식이라, 미지원 브라우저에서는 위의 단색이 그대로 보입니다 */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  h1,
+  .section-heading h2,
+  .contact h2 {
+    background-image: var(--gradient-ice-highlight);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+/* 윈도우 고대비 모드에서는 시스템 색을 쓰도록 되돌립니다 */
+@media (forced-colors: active) {
+  h1,
+  .section-heading h2,
+  .contact h2 {
+    background: none;
+    -webkit-text-fill-color: CanvasText;
+    color: CanvasText;
+  }
+}
+
+/* 작은 제목(카드 제목): 그라데이션 없이 단색 */
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--text-heading-sm);
+  line-height: 1.17;
+  letter-spacing: -0.24px;
+  color: var(--color-ice-highlight);
+}
+
+/* eyebrow: 영문 대문자, 자간 0.10em의 모노 라벨. 좌우에 가운데로 갈수록 선명해지는
+   가는 선이 붙습니다(::before / ::after) */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  color: var(--color-moon-mist);
+  font-family: var(--font-label);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.eyebrow::before,
+.eyebrow::after {
+  content: "";
+  flex: 1 1 0;
+  min-width: 0;            /* 좁은 화면에서 선이 0까지 줄어들 수 있게 */
+  max-width: 160px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--hairline));
+}
+.eyebrow::after { background: linear-gradient(270deg, transparent, var(--hairline)); }
+
+
+/* --------------------------------------------------------------------------
+   4. 헤더
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;               /* 아주 좁은 화면에서는 메뉴가 아랫줄로 내려가 넘치지 않음 */
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  min-height: 64px;
+  padding-block: 12px;
+  padding-inline: var(--gutter);
+  background: rgba(5, 6, 15, 0.92);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.brand {
+  color: var(--color-frost-glow);
+  font-size: var(--text-body);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+
+nav { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* 내비게이션 = Outlined 알약 버튼 */
+nav a {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  color: var(--color-frost-glow);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  line-height: 1.43;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+nav a:hover { background: var(--wash-06); color: var(--color-pure-white); }
+
+
+/* --------------------------------------------------------------------------
+   5. 페이지 흐름: main 안의 섹션 사이 간격을 gap 하나로 관리
+   각 섹션에 위아래 padding을 따로 주면 인접한 두 섹션의 여백이 겹쳐 두 배가 되므로
+   flex column + gap 으로 한 번만 적용합니다.
+   -------------------------------------------------------------------------- */
+main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}
+/* 메뉴로 이동했을 때 sticky 헤더에 제목이 가려지지 않게 */
+section[id] { scroll-margin-top: 96px; }
+
+.section,
+.metrics { padding-inline: var(--gutter); }
+
+
+/* --------------------------------------------------------------------------
+   6. 히어로: 가운데 정렬 큰 제목 + 위쪽 스포트라이트
+   -------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  isolation: isolate;            /* ::before(z-index:-1)가 히어로 안에 머물게 함 */
+  display: grid;
+  justify-items: center;
+  gap: 56px;
+  padding: 100px var(--gutter) 0;
+  text-align: center;
+}
+
+/* 원뿔형 빛줄기: 위쪽 중앙에서 아래로 퍼지며 아래쪽으로 갈수록 사라집니다 */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: conic-gradient(
+    at 50% -5%,
+    transparent 45%,
+    rgba(124, 145, 182, 0.3) 49%,
+    rgba(124, 145, 182, 0.5) 50%,
+    rgba(124, 145, 182, 0.3) 51%,
+    transparent 55%
+  );
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+}
+
+.hero-copy { width: 100%; max-width: 800px; }
+/* 한 줄씩 끊긴 .hero-line은 <br>이 줄바꿈을 담당하므로 인라인 그대로 두면 됩니다 */
+.hero h1 { margin-bottom: 24px; }
+.hero-summary {
+  max-width: 640px;
+  margin-inline: auto;
+  color: var(--color-moon-mist);
+  font-size: var(--text-subheading);
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+/* 버튼 = 알약(999px). primary는 연한 유리 면, secondary는 투명 + 테두리만 */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  line-height: 1.43;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+.button.primary   { background: var(--wash-06); color: var(--color-pure-white); }
+.button.secondary { background: transparent;    color: var(--color-frost-glow); }
+.button.primary:hover   { background: var(--wash-12); }
+.button.secondary:hover { background: var(--wash-06); color: var(--color-pure-white); }
+
+/* 프로필 요약: DESIGN.md의 "Auth-Form Modal Card" (거의 불투명한 어두운 면 + 안쪽 빛) */
+.snapshot {
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+  border-radius: var(--radius-card);
+  background: rgba(5, 6, 15, 0.97);
+  box-shadow: var(--modal-inset);
+  text-align: left;
+}
+.snapshot-label {
+  margin-bottom: 8px;
+  color: var(--color-moon-mist);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.snapshot dl div {
+  display: grid;
+  grid-template-columns: minmax(72px, 36%) minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--hairline);
+}
+.snapshot dt {
+  color: var(--color-fog-veil);
+  font-size: var(--text-body-sm);
+  line-height: 1.43;
+  letter-spacing: 0;
+}
+.snapshot dd { color: var(--color-ice-highlight); font-weight: 500; }
+.availability {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--hairline);
+  color: var(--color-fog-veil);
+  font-size: var(--text-body-sm);
+  letter-spacing: 0;
+}
+.availability span {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-circle);
+  background: var(--color-frost-glow);   /* 주황 대신 팔레트 안의 청백색 */
+}
+
+
+/* --------------------------------------------------------------------------
+   7. 카드 공통 (Glass Card): 거의 안 보이는 유리 면 + 안쪽 빛, 테두리선 없음
+   -------------------------------------------------------------------------- */
+.metrics article,
+.project-card,
+.capability-grid article,
+.contact {
+  padding: var(--card-pad);
+  border-radius: var(--radius-card);
+  background: var(--wash-03);
+  box-shadow: var(--glass-inset);
+}
+
+
+/* --------------------------------------------------------------------------
+   8. 주요 수치
+   minmax(0, 1fr): 칸이 내용물 때문에 늘어나 가로 스크롤을 만드는 것을 막는 관용구
+   -------------------------------------------------------------------------- */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap);
+}
+.metrics article { text-align: center; }
+.metrics strong {
+  display: block;
+  color: var(--color-ice-highlight);
+  font-family: var(--font-display);
+  font-size: var(--text-heading-lg);
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: 0;
+}
+.metrics span {
+  display: block;
+  margin-top: 8px;
+  color: var(--color-moon-mist);
+  font-size: var(--text-body-sm);
+  line-height: 1.43;
+  letter-spacing: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   9. 섹션 제목: 가운데 정렬 eyebrow → 큰 제목 → 한 줄 보조 설명
+   -------------------------------------------------------------------------- */
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 56px;
+  text-align: center;
+}
+.section-heading > div { width: 100%; }   /* eyebrow의 양옆 선이 늘어날 폭 확보 */
+.section-heading .eyebrow { margin-bottom: 16px; }
+.section-heading > p {
+  max-width: 640px;
+  color: var(--color-moon-mist);
+  letter-spacing: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   10. 프로젝트 카드
+   -------------------------------------------------------------------------- */
+.project-card.featured {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 40px;
+  align-items: center;
+  padding: 32px;
+}
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-top: var(--gap);
+}
+
+/* 캡처 이미지 칸.
+   - figure의 기본 좌우 margin(40px)을 0으로 지워야 모바일에서 넘치지 않습니다.
+   - 이미지는 absolute로 칸을 채워서, 비율(aspect-ratio)만으로 높이가 정해집니다. */
+.project-visual {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  background: var(--tint-input);
+}
+.project-visual.wide { aspect-ratio: 16 / 10; }
+.project-visual.std  { aspect-ratio: 16 / 9; }
+.project-visual img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.compact { display: flex; flex-direction: column; }
+.compact .project-copy { margin-top: 24px; }
+
+.project-number {
+  margin-bottom: 12px;
+  color: var(--color-fog-veil);
+  font-family: var(--font-label);
+  font-size: var(--text-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.project-copy h3 { margin-bottom: 12px; }
+.project-copy > p {
+  margin-bottom: 16px;
+  color: var(--color-moon-mist);
+  letter-spacing: 0;
+}
+.project-copy .one-line-impact {
+  font-size: var(--text-body-sm);
+  line-height: 1.43;
+}
+.one-line-impact strong {
+  margin-right: 8px;
+  color: var(--color-fog-veil);
+  font-weight: 500;
+}
+
+/* 문제/기여/결과 목록: 항목 사이를 헤어라인으로 나눕니다 */
+.impact-list { margin: 24px 0; border-bottom: 1px solid var(--hairline); }
+.impact-list li {
+  display: grid;
+  grid-template-columns: 3em minmax(0, 1fr);
+  align-items: baseline;          /* 라벨과 본문 첫 줄의 글자 기준선을 맞춤 */
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--hairline);
+}
+.impact-list strong {
+  color: var(--color-fog-veil);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+}
+.impact-list span { color: var(--color-moon-mist); letter-spacing: 0; }
+
+/* 태그 = Badge: 6px 모서리, 반투명 면, 12px */
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tags span {
+  padding: 4px 8px;
+  border-radius: var(--radius-badge);
+  background: var(--tint-badge);
+  box-shadow: inset 0 0 0 1px rgba(186, 214, 247, 0.06);
+  color: var(--color-frost-glow);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.33;
+  letter-spacing: 0;
+}
+.compact .tags { margin-top: 16px; }
+
+/* 자세히 보기: summary를 알약 버튼 모양으로. 기본 삼각형 마커는 지우고 +/− 로 대체 */
+details { margin-top: 24px; }
+summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  background: var(--wash-06);
+  color: var(--color-pure-white);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  line-height: 1.43;
+  letter-spacing: 0;
+  list-style: none;
+  cursor: pointer;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; content: "+" / ""; }   /* "/ ''" = 스크린리더가 읽지 않게 하는 대체 텍스트 */
+details[open] summary::after { content: "\2212"; content: "\2212" / ""; }
+summary:hover { background: var(--wash-12); }
+details p {
+  margin-top: 16px;
+  color: var(--color-moon-mist);
+  letter-spacing: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   11. 경험(역량) 카드: 번호는 Feature Icon Tile(56px 원형 타일)로
+   -------------------------------------------------------------------------- */
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+.capability-grid article { display: flex; flex-direction: column; }
+.capability-grid article > span {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-circle);
+  background: var(--wash-06);
+  box-shadow: inset 0 0 0 1px var(--hairline);
+  color: var(--color-frost-glow);
+  font-family: var(--font-label);
+  font-size: var(--text-body-sm);
+  letter-spacing: 0;
+}
+.capability-grid h3 { margin: 24px 0 8px; }
+.capability-grid p { margin-bottom: 24px; color: var(--color-moon-mist); letter-spacing: 0; }
+.capability-grid small {
+  display: block;
+  margin-top: auto;               /* 카드 높이가 달라도 근거 문구가 바닥에 정렬됨 */
+  padding-top: 16px;
+  border-top: 1px solid var(--hairline);
+  color: var(--color-fog-veil);
+  font-size: var(--text-caption);
+  line-height: 1.33;
+  letter-spacing: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   12. 연락처 + 푸터
+   -------------------------------------------------------------------------- */
+.contact {
+  margin-inline: var(--gutter);   /* 다른 섹션의 좌우 여백과 같은 선에 맞춤 */
+  padding: clamp(32px, 6vw, 56px) clamp(24px, 6vw, 56px);
+  text-align: center;
+}
+.contact > p:not(.eyebrow) {
+  max-width: 640px;
+  margin: 24px auto;
+  color: var(--color-moon-mist);
+  font-size: var(--text-subheading);
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.contact-links a {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  background: var(--wash-06);
+  color: var(--color-pure-white);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  line-height: 1.43;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+.contact-links a:hover { background: var(--wash-12); }
+
+footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-top: var(--section-gap);
+  padding: 24px var(--gutter) 40px;
+  border-top: 1px solid var(--hairline);
+  color: var(--color-fog-veil);
+  font-size: var(--text-body-sm);
+  letter-spacing: 0;
+}
+footer a {
+  color: var(--color-frost-glow);
+  text-decoration-color: rgba(186, 215, 247, 0.4);
+  text-underline-offset: 4px;
+}
+footer a:hover { color: var(--color-pure-white); }
+
+
+/* --------------------------------------------------------------------------
+   13. 움직임: 색이 바뀌는 hover 전환만 남김 (0.2초)
+   -------------------------------------------------------------------------- */
+a, .button, summary {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+/* script.js가 붙일 수 있는 등장 애니메이션 클래스를 무력화: 내용은 항상 바로 보임 */
+.js-motion .reveal,
+.js-motion .reveal.is-visible { opacity: 1; transform: none; transition: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+
+
+/* --------------------------------------------------------------------------
+   14. 반응형
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  :root { --section-gap: 100px; }
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-card.featured { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: var(--card-pad); }
+  .project-grid,
+  .capability-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 620px) {
+  :root { --section-gap: 56px; }
+  .hero { gap: 40px; padding-top: 56px; }
+  .hero-summary,
+  .contact > p:not(.eyebrow) { font-size: var(--text-body); }
+  .eyebrow { gap: 12px; font-size: var(--text-caption); }
+  .section-heading { margin-bottom: 40px; }
+  .snapshot { padding: var(--card-pad); }
+  .metrics strong { font-size: var(--text-heading); }
+  nav a { padding: 8px 12px; }
+}
+
+/* 터치 화면에서는 누를 영역을 44px 이상으로 */
+@media (pointer: coarse) {
+  .button, nav a, summary, .contact-links a { min-height: 44px; }
+}
