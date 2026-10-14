@@ -80,25 +80,40 @@
           <div class="tags" aria-label="사용 기술"><span>Python</span><span>YOLO26</span><span>MLflow</span><span>FastAPI</span><span>PostgreSQL</span><span>React · TypeScript</span><span>Docker</span><span>GitHub Actions</span><span>AWS Lightsail</span></div>
           <details>
             <summary>문제 해결 과정 자세히 보기</summary>
-            <p>오탐을 줄이려면 드론과 혼동되는 비행체를 따로 학습시켜야 한다고 보고 4개 클래스 데이터셋으로 다시 학습했습니다. 클래스 수가 달라지면 기존 가중치를 이어받을 수 없어 사전학습 가중치부터 전이학습을 새로 시작했고, epoch당 약 25분 걸리던 CPU 학습은 GPU(RTX 3070, CUDA)로 바꿔 해결했습니다.</p>
-            <p>요청 하나를 저장할 때 데이터가 일부만 저장되는 문제는 flush와 rollback으로 하나의 트랜잭션으로 묶어 고쳤고, 학습 이력 누적 그래프가 목표 epoch 값 때문에 부풀려지는 문제는 실제로 기록된 step 기준으로 계산하도록 바꿨습니다.</p>
+            <ul class="impact-list">
+              <li><strong>오탐</strong><span>강아지를 드론으로 오인 → 혼동되는 비행체까지 비행기·새·드론·헬리콥터 4클래스로 확장해 재학습</span></li>
+              <li><strong>학습</strong><span>클래스 수가 달라 기존 가중치를 이어받을 수 없음 → 사전학습 가중치부터 전이학습 / epoch당 약 25분 걸리던 CPU 학습을 GPU(RTX 3070, CUDA)로 전환</span></li>
+              <li><strong>저장</strong><span>요청 하나를 저장할 때 데이터가 일부만 저장됨 → flush와 rollback으로 하나의 트랜잭션으로 묶음</span></li>
+              <li><strong>그래프</strong><span>학습 이력 누적 그래프가 목표 epoch 값 때문에 부풀려짐 → 실제로 기록된 step 기준으로 계산</span></li>
+            </ul>
             <p>두 모델은 서로 다른 공개 데이터셋의 검증 세트로 평가한 값이라 단순 비교는 어렵고, 실제 환경 영상에서의 성능은 추가로 확인해야 합니다.</p>
           </details>
         </div>
       </article>
 
       <div class="project-grid">
-        <!-- 작은 카드 2칸: 아래 '작성 예정' 문구와 이미지 자리를 실제 내용으로 바꿔 주세요.
-             이미지는 images/project-2.png, project-3.png로 넣고 figure 안에
-             <img src="images/project-2.png" alt="화면 설명" width="640" height="360" loading="lazy"> 를 추가하면 됩니다. -->
+        <!-- 02번은 FIFA 월드컵 데이터 API로 채웠고, 03번은 '작성 예정' 틀입니다.
+             이미지는 images/project-2.png, project-3.png로 넣고, 각 figure 안에
+             <img src="images/project-2.png" alt="화면 설명" width="640" height="360" loading="lazy"> 를 추가한 뒤
+             figure의 aria-hidden="true"를 지워 주세요. -->
         <article class="project-card compact">
           <figure class="project-visual shot std" aria-hidden="true"></figure>
           <div class="project-copy">
-            <div class="project-number">02 · 작성 예정</div>
-            <h3>프로젝트 제목</h3>
-            <p>프로젝트를 한두 문장으로 설명하는 자리입니다.</p>
-            <p class="one-line-impact"><strong>내 기여</strong> 맡은 역할을 적어 주세요</p>
-            <div class="tags"><span>기술</span><span>기술</span></div>
+            <div class="project-number">02 · TEAM PROJECT</div>
+            <h3>2026 FIFA 월드컵 데이터 API</h3>
+            <p>월드컵 선수·경기·팀 데이터를 PostgreSQL에 저장하고 FastAPI로 제공한 뒤, Streamlit에서 검색과 통계를 볼 수 있게 만든 팀 프로젝트입니다. 이후 FastAPI·PostgreSQL·Streamlit을 Docker Compose로 연계했습니다.</p>
+            <p class="one-line-impact"><strong>내 기여</strong> Docker 컨테이너 연계 · DB 적재와 검색 문제 해결 · README 작성</p>
+            <div class="tags"><span>Python</span><span>FastAPI</span><span>PostgreSQL</span><span>Streamlit</span><span>Docker Compose</span></div>
+            <details>
+              <summary>트러블슈팅 자세히 보기</summary>
+              <ul class="impact-list">
+                <li><strong>적재</strong><span>setup_database.py를 다시 실행하면 테이블이 중복됨 → 테이블 이름 대소문자(playerse)를 통일하고, 맨 앞 주석에 묶여 건너뛰어지던 DROP TABLE이 실행되도록 주석 줄을 먼저 제거</span></li>
+                <li><strong>검색</strong><span>한글 선수 이름은 표기법이 사람마다 달라 검색이 안 됨 → 영문 이름 테이블을 추가하고 or_와 ilike로 한글·영문·부분 일치 검색</span></li>
+                <li><strong>연결</strong><span>컨테이너 안의 localhost는 자기 자신이라 Streamlit이 FastAPI에 연결하지 못함 → API 주소를 환경변수로 받아 서비스 이름(http://api:8000)으로 호출</span></li>
+                <li><strong>데이터</strong><span>Docker DB에 데이터가 적재되지 않아 검색 결과가 빔 → 로컬 PostgreSQL과 겹치지 않게 DB 컨테이너 포트를 5433으로 열어 적재</span></li>
+                <li><strong>경로</strong><span>순위 화면에서 matches.csv를 찾지 못함 → 볼륨 마운트로 코드가 찾는 경로에 파일이 놓이게 수정</span></li>
+              </ul>
+            </details>
           </div>
         </article>
 
@@ -148,6 +163,23 @@
       <div class="capability-grid">
         <article><span>01</span><h3>빅데이터 분석 플랫폼 개발자 양성과정</h3><p>Python·SQL 기초부터 FastAPI·Streamlit 기반 웹 서비스, Docker 컨테이너화, GitHub Actions 기반 CI/CD, AWS Lightsail 배포·운영 실습, LangChain 기반 AI 서비스 실습까지 총 900시간 동안 배웠습니다.</p><small>2026.05 ~ 2026.10 · 코리아 AI 아카데미대구</small></article>
         <article><span>02</span><h3>로봇공학부</h3><p>C/C++과 STM32 기반 실습으로 하드웨어 제어를 익혔고, 캡스톤 디자인으로 로봇을 직접 구동해 보았습니다.</p><small>2018.03 ~ 2024.02 · 경일대학교 · 졸업</small></article>
+      </div>
+    </section>
+
+    <section class="section study-log" id="log" aria-labelledby="log-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">STUDY LOG</p><h2 id="log-title">학습 데일리 로그</h2></div>
+        <p>매일 배운 것을 하루 단위로 기록하고 있습니다. 월별 요약과 원본 일지 링크를 모았습니다.</p>
+      </div>
+      <!-- 월별 카드: 새 달이 시작되면 카드 한 장을 복사해 파일 이름(2026-11.md 등)과 기간, 요약을 바꾸고,
+           아래 '전체 학습일지' 카드의 숫자(80)도 함께 고쳐 주세요. 카드를 7장 이상으로 늘릴 때는 3의 배수가 되게 맞추면 줄이 깔끔합니다. -->
+      <div class="capability-grid log-grid">
+        <article><span>06</span><h3>FastAPI·HTML 복습, SQL 기초</h3><p>FastAPI와 HTML/CSS 수업 내용을 복습하고, SQL 기초와 SQLD의 JOIN·기출 문제를 풀었습니다. 판다스로 엑셀 파일을 읽고 병합·시각화하는 것도 해 봤습니다.</p><small>2026.06.15 ~ 06.30 · 12일 기록 · <a href="https://github.com/TaeGaori/Deily_log/blob/main/2026-06.md" target="_blank" rel="noopener">월별 일지 보기</a></small></article>
+        <article><span>07</span><h3>데이터 수집·DB·모델링 입문</h3><p>CSV와 API로 데이터를 수집해 PostgreSQL에 저장하는 파이프라인과 SQLAlchemy 모델, pytest 단위 테스트를 익혔습니다. 전처리·EDA 뒤에는 선형 회귀부터 랜덤포레스트, 로지스틱 회귀, k-means까지 모델링을 배우고 Streamlit도 실습했습니다.</p><small>2026.07.01 ~ 07.31 · 22일 기록 · <a href="https://github.com/TaeGaori/Deily_log/blob/main/2026-07.md" target="_blank" rel="noopener">월별 일지 보기</a></small></article>
+        <article><span>08</span><h3>모델 서비스화와 Docker 시작</h3><p>통신 고객 이탈 모델을 학습·저장하고, 대구 지하철 승하차 대시보드를 Streamlit으로 만들었습니다. JWT 인증 Todo API, Todo 카테고리 분류 ML, ISBN 인식 책장, 월드컵 팀 프로젝트를 진행하며 Docker를 시작했습니다.</p><small>2026.08.03 ~ 08.31 · 20일 기록 · <a href="https://github.com/TaeGaori/Deily_log/blob/main/2026-08.md" target="_blank" rel="noopener">월별 일지 보기</a></small></article>
+        <article><span>09</span><h3>Docker·CI/CD와 MLOps</h3><p>GitHub Actions 자동 배포와 AWS Lightsail 배포를 실습하고, 대출 승인 예측 모델로 API 서빙·컨테이너화·CI·드리프트 감지와 재학습을 익혔습니다. 9월 15일부터 드론 탐지 AegisVision을 시작해 FastAPI·DB·인증·경보·비디오 탐지를 구현했습니다.</p><small>2026.09.02 ~ 09.30 · 18일 기록 · <a href="https://github.com/TaeGaori/Deily_log/blob/main/2026-09.md" target="_blank" rel="noopener">월별 일지 보기</a></small></article>
+        <article><span>10</span><h3>AegisVision 마무리와 배포</h3><p>React 대시보드(경보, 탐지, 학습 이력 화면 등)를 만들고, GitHub Actions와 AWS Lightsail로 수동 배포에서 자동 배포, Compose 배포까지 진행했습니다. 발표자료를 만들고 서버용 환경 변수 파일을 준비했습니다.</p><small>2026.10.01 ~ 10.13 · 8일 기록 · <a href="https://github.com/TaeGaori/Deily_log/blob/main/2026-10.md" target="_blank" rel="noopener">월별 일지 보기</a></small></article>
+        <article><span>80</span><h3>전체 학습일지</h3><p>6월 15일부터 10월 13일까지 하루 단위로 정리한 기록입니다. 목차(README)에서 월별 파일을 모아 볼 수 있습니다.</p><small>GitHub · Deily_log · <a href="https://github.com/TaeGaori/Deily_log" target="_blank" rel="noopener">저장소 열기</a></small></article>
       </div>
     </section>
 

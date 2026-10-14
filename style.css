@@ -676,6 +676,17 @@ details p {
 }
 
 
+/* 학습 로그 카드: 월별 5장 + 전체 보기 1장 = 6장이라 3열로 고정(3×2).
+   링크는 카드 안에서 밑줄과 밝은 색으로만 구분합니다 */
+.capability-grid.log-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.capability-grid small a {
+  color: var(--color-frost-glow);
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(186, 215, 247, 0.4);
+}
+.capability-grid small a:hover { color: var(--color-pure-white); }
+
+
 /* --------------------------------------------------------------------------
    12. 연락처 + 푸터
    -------------------------------------------------------------------------- */
@@ -757,7 +768,8 @@ a, .button, summary {
   :root { --section-gap: 100px; }
   .project-card.featured { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: var(--card-pad); }
   .project-grid,
-  .capability-grid { grid-template-columns: minmax(0, 1fr); }
+  .capability-grid,
+  .capability-grid.log-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 620px) {
