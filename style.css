@@ -603,6 +603,9 @@ section[id] { scroll-margin-top: 96px; }
 /* 태그 = Badge: 6px 모서리, 반투명 면, 12px */
 .tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding: 4px 8px;
   border-radius: var(--radius-badge);
   background: var(--tint-badge);
@@ -614,6 +617,9 @@ section[id] { scroll-margin-top: 96px; }
   letter-spacing: 0;
 }
 .compact .tags { margin-top: 16px; }
+.tags img { flex: none; width: 16px; height: 16px; }   /* 태그 안 기술 로고 */
+.tags img.logo-wide,
+.tech-list img.logo-wide { width: 27px; }   /* 가로로 긴 AWS 로고 (304×182) */
 .project-links { margin-top: 16px; }   /* 'GitHub에서 코드 보기' 버튼 줄 */
 
 /* 자세히 보기: summary를 알약 버튼 모양으로. 기본 삼각형 마커는 지우고 +/− 로 대체 */
@@ -686,6 +692,28 @@ details p {
 /* 학습 로그 카드: 월별 5장 + 전체 보기 1장 = 6장이라 3열로 고정(3×2).
    링크는 카드 안에서 밑줄과 밝은 색으로만 구분합니다 */
 .capability-grid.log-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* 역량 카드 4장은 2×2로 고정(auto-fit이면 중간 폭에서 3+1로 갈라짐) */
+.capability-grid.skills-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* 기술 로고 줄: 태그(Badge)와 같은 모양에 작은 로고(16px)를 붙입니다.
+   로고는 images/tech/ 의 SVG이고, 색은 SVG 파일 안에 들어 있습니다. */
+.capability-grid .tech-list { display: flex; flex-wrap: wrap; gap: 8px; margin: -8px 0 24px; }
+.tech-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: var(--radius-badge);
+  background: var(--tint-badge);
+  box-shadow: inset 0 0 0 1px rgba(186, 214, 247, 0.06);
+  color: var(--color-frost-glow);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.33;
+  letter-spacing: 0;
+}
+.tech-list img { flex: none; width: 16px; height: 16px; }
 .capability-grid small a {
   color: var(--color-frost-glow);
   text-underline-offset: 4px;
@@ -776,6 +804,7 @@ a, .button, summary {
   .project-card.featured { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: var(--card-pad); }
   .project-grid,
   .capability-grid,
+  .capability-grid.skills-grid,
   .capability-grid.log-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
