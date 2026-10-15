@@ -88,22 +88,26 @@
             </ul>
             <p>두 모델은 서로 다른 공개 데이터셋의 검증 세트로 평가한 값이라 단순 비교는 어렵고, 실제 환경 영상에서의 성능은 추가로 확인해야 합니다.</p>
           </details>
+          <div class="project-links">
+            <a class="button secondary" href="https://github.com/TaeGaori/AegisVision" target="_blank" rel="noopener" aria-label="AegisVision 저장소, 새 탭에서 열림">GitHub에서 코드 보기</a>
+          </div>
         </div>
       </article>
 
       <div class="project-grid">
-        <!-- 02번은 FIFA 월드컵 데이터 API로 채웠고, 03번은 '작성 예정' 틀입니다.
-             이미지는 images/project-2.png, project-3.png로 넣고, 각 figure 안에
-             <img src="images/project-2.png" alt="화면 설명" width="640" height="360" loading="lazy"> 를 추가한 뒤
-             figure의 aria-hidden="true"를 지워 주세요. -->
         <article class="project-card compact">
-          <figure class="project-visual shot std" aria-hidden="true"></figure>
+          <figure class="project-visual shot std">
+            <img src="images/project-2.png" alt="선수 검색 화면: 이름과 국가로 검색한 결과 2명이 표로 표시됨" width="957" height="571" loading="lazy">
+          </figure>
           <div class="project-copy">
             <div class="project-number">02 · TEAM PROJECT</div>
             <h3>2026 FIFA 월드컵 데이터 API</h3>
             <p>월드컵 선수·경기·팀 데이터를 PostgreSQL에 저장하고 FastAPI로 제공한 뒤, Streamlit에서 검색과 통계를 볼 수 있게 만든 팀 프로젝트입니다. 이후 FastAPI·PostgreSQL·Streamlit을 Docker Compose로 연계했습니다.</p>
             <p class="one-line-impact"><strong>내 기여</strong> Docker 컨테이너 연계 · DB 적재와 검색 문제 해결 · README 작성</p>
             <div class="tags"><span>Python</span><span>FastAPI</span><span>PostgreSQL</span><span>Streamlit</span><span>Docker Compose</span></div>
+            <div class="project-links">
+              <a class="button secondary" href="https://github.com/TaeGaori/Worldcup" target="_blank" rel="noopener" aria-label="FIFA 월드컵 데이터 API 저장소, 새 탭에서 열림">GitHub에서 코드 보기</a>
+            </div>
             <details>
               <summary>트러블슈팅 자세히 보기</summary>
               <ul class="impact-list">
@@ -118,13 +122,26 @@
         </article>
 
         <article class="project-card compact">
-          <figure class="project-visual shot std" aria-hidden="true"></figure>
+          <figure class="project-visual shot flow">
+            <a href="images/project-3.png" target="_blank" rel="noopener" aria-label="송전탑 전선 점검 로봇 동작 흐름도 원본을 새 탭에서 크게 보기" title="클릭하면 크게 볼 수 있습니다">
+              <img src="images/project-3.png" alt="송전탑 전선 점검 로봇의 동작 흐름도: 와이파이 서버와 TCP 소켓으로 영상 프레임을 주고받아 이진화·픽셀 수로 판정하고, 버튼 입력 뒤 모터 출력, 전선 온도 30도 기준 서보 모터 표시, 초음파 거리 10cm 기준 후진과 정지로 이어집니다" width="1200" height="716" loading="lazy">
+            </a>
+          </figure>
           <div class="project-copy">
-            <div class="project-number">03 · 작성 예정</div>
-            <h3>프로젝트 제목</h3>
-            <p>프로젝트를 한두 문장으로 설명하는 자리입니다.</p>
-            <p class="one-line-impact"><strong>내 기여</strong> 맡은 역할을 적어 주세요</p>
-            <div class="tags"><span>기술</span><span>기술</span></div>
+            <div class="project-number">03 · CAPSTONE DESIGN</div>
+            <h3>송전탑 전선 점검 로봇</h3>
+            <p>ESP32-CAM으로 받은 영상 프레임을 이진화해 픽셀 수로 판정하고, 판정과 버튼 입력에 따라 모터가 움직이며 서보 모터로 전선에 표시하는 점검 로봇입니다. (2023.03 ~ 2023.07, 캡스톤 디자인)</p>
+            <p class="one-line-impact"><strong>내 기여</strong> 모터·서보 모터 구동 프로그래밍 (영상 판정은 팀원과 함께 진행)</p>
+            <div class="tags"><span>Arduino</span><span>ESP32-CAM</span><span>TCP 소켓</span><span>서보 모터</span><span>초음파 센서</span></div>
+            <details>
+              <summary>동작 흐름 자세히 보기</summary>
+              <ul class="impact-list">
+                <li><strong>통신</strong><span>와이파이 서버(카메라 서버)가 클라이언트 요청을 처리하고, TCP 소켓으로 ESP32에 연결해 동영상 프레임을 주고받음</span></li>
+                <li><strong>판정</strong><span>받은 프레임을 이진화해 픽셀 수가 일정 이하(G)인지 이상(B)인지 구분하고, "P" 입력으로 명령을 끝낸 뒤 소켓을 닫음</span></li>
+                <li><strong>구동</strong><span>버튼을 누르면 모터를 출력하고, 전선 온도가 30도 이상이면 서보 모터를 가동해 전선에 표시</span></li>
+                <li><strong>거리</strong><span>초음파 거리가 10cm 미만이면 모터를 후진시키고, 후진 뒤에도 10cm 미만이면 정지</span></li>
+              </ul>
+            </details>
           </div>
         </article>
       </div>
@@ -148,10 +165,9 @@
         <p>로봇공학부에서 쌓은 하드웨어 이해가 영상 인식에 관심을 갖게 된 출발점입니다.</p>
       </div>
       <div class="capability-grid">
-        <article><span>01</span><h3>송전탑 전선 점검 로봇</h3><p>캡스톤 디자인에서 Arduino·ESP32-CAM 기반 로봇의 구동 프로그래밍을 맡았습니다. 카메라 영상을 처리한 결과가 모터 구동으로 이어지는 과정을 경험했고, 컴퓨터 비전에 관심을 갖게 된 계기가 되었습니다.</p><small>2023.03 ~ 2023.07 · 캡스톤 디자인</small></article>
-        <article><span>02</span><h3>자율주행 대회</h3><p>하드웨어 조립을 맡고, 오픈소스 코드의 속도와 장애물 인식 거리 설정값을 조정했습니다.</p><small>2023.05 · 자율주행 대회</small></article>
-        <article><span>03</span><h3>STM32 디지털 시계</h3><p>GPIO 제어, 7-Segment 출력, 스위치 입력 처리를 구현했습니다. 버튼을 누르는 동안 시간 카운트까지 멈추는 문제를 찾아, 이전과 현재 버튼 상태를 비교해 눌리는 순간에만 한 번 동작하도록 고쳤습니다.</p><small>2022.06 · 마이크로프로세서 수업</small></article>
-        <article><span>04</span><h3>현장실습</h3><p>대영코어텍에서 부품 조립 업무를 맡았습니다. 처음 접하는 작업 방식은 확인하며 익혔고, 실습 후 멘토로부터 일 처리가 확실하다는 평가를 받았습니다.</p><small>2023 하계방학 · 대영코어텍</small></article>
+        <article><span>01</span><h3>자율주행 대회</h3><p>하드웨어 조립을 맡고, 오픈소스 코드의 속도와 장애물 인식 거리 설정값을 조정했습니다.</p><small>2023.05 · 자율주행 대회</small></article>
+        <article><span>02</span><h3>STM32 디지털 시계</h3><p>GPIO 제어, 7-Segment 출력, 스위치 입력 처리를 구현했습니다. 버튼을 누르는 동안 시간 카운트까지 멈추는 문제를 찾아, 이전과 현재 버튼 상태를 비교해 눌리는 순간에만 한 번 동작하도록 고쳤습니다.</p><small>2022.06 · 마이크로프로세서 수업</small></article>
+        <article><span>03</span><h3>현장실습</h3><p>대영코어텍에서 부품 조립 업무를 맡았습니다. 처음 접하는 작업 방식은 확인하며 익혔고, 실습 후 멘토로부터 일 처리가 확실하다는 평가를 받았습니다.</p><small>2023 하계방학 · 대영코어텍</small></article>
       </div>
     </section>
 

@@ -539,8 +539,8 @@ section[id] { scroll-margin-top: 96px; }
   border-radius: 10px;
   background: var(--tint-input);
 }
-.project-visual.wide { aspect-ratio: 16 / 10; }
-.project-visual.std  { aspect-ratio: 16 / 9; }
+.project-visual.wide { aspect-ratio: 16 / 11; }
+.project-visual.std  { aspect-ratio: 957 / 571; }   /* 02번 카드 캡처(957×571) 원본 비율: 아래쪽이 잘리지 않음 */
 .project-visual img {
   position: absolute;
   inset: 0;
@@ -549,6 +549,12 @@ section[id] { scroll-margin-top: 96px; }
   object-fit: cover;
   object-position: top center;
 }
+
+/* 흐름도 같은 이미지: 자르지 않고 통째로 보이게(contain), 비율은 02번 카드 이미지(957×571)와 같게 맞춤.
+   a가 칸 전체를 덮어 클릭하면 원본이 새 탭에서 열립니다 */
+.project-visual.flow { aspect-ratio: 957 / 571; background: var(--color-pure-white); }
+.project-visual.flow a { position: absolute; inset: 0; display: block; }
+.project-visual.flow img { object-fit: contain; object-position: center; }
 
 .compact { display: flex; flex-direction: column; }
 .compact .project-copy { margin-top: 24px; }
@@ -608,6 +614,7 @@ section[id] { scroll-margin-top: 96px; }
   letter-spacing: 0;
 }
 .compact .tags { margin-top: 16px; }
+.project-links { margin-top: 16px; }   /* 'GitHub에서 코드 보기' 버튼 줄 */
 
 /* 자세히 보기: summary를 알약 버튼 모양으로. 기본 삼각형 마커는 지우고 +/− 로 대체 */
 details { margin-top: 24px; }
